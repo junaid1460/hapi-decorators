@@ -3,7 +3,7 @@
 
 ```shell
 
-npm i @junaid1460/hapi-decorators
+npm i @junaid1460/hapiest
 ```
 
 ### Requirements
