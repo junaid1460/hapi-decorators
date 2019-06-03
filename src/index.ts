@@ -32,11 +32,12 @@ function RouteSet(args: IRouteSetOptions) {
 }
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-type IRouteOptions = Omit<ServerRoute, "path" | "method" | "handler">;
-function Route(
-    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS",
-) {
-    return function Get(path?: string, args?: IRouteOptions) {
+type IRouteOptions = Omit<ServerRoute,  "method" | "handler">;
+type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
+type MakeOptional<T> = {[key in keyof T]?}
+
+function Route(method: HTTPMethods) {
+    return function Get({vhost, rules, path, options}: MakeOptional<IRouteOptions> = {}) {
         return function<T extends HapiServerRoutes>(
             target: T,
             propertyKey: string | symbol,
@@ -51,8 +52,11 @@ function Route(
             if (!target.routes) {
                 target.routes = [];
             }
+        
             target.routes.push({
-                ...(args || ({} as any)),
+                vhost: vhost,
+                options: options,
+                rules: rules,
                 handler: descriptor.value,
                 path: path || propertyKey,
                 method: method,
