@@ -8,3 +8,4 @@ npm i @junaid1460/hapi-decorators
 ```
 
 ### Usage
+
