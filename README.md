@@ -12,14 +12,14 @@ npm i @junaid1460/hapi-decorators
 import { Request, ResponseToolkit, Server } from "hapi";
 import { AbstractHapiModule, Decorators as d, HapiServerRoutes } from "@junaid1460/hapiest";
 
-@d.routeGroup({ baseUrl: "test", auth: false })
+@d.routeGroup({ baseUrl: "api", auth: false })
 export class AdminRoutes extends HapiServerRoutes {
-    @d.get()
+    @d.get() // Path: /api/getTest
     public getTest(request: Request, toolkit: ResponseToolkit, err?: Error) {
         return "hey, what's up?\n";
     }
 
-    @d.get({path: 'name'})
+    @d.get({path: 'name'}) // Path: /api/name
     public async getit(request: Request, toolkit: ResponseToolkit, err?: Error) {
         return "junaid\n";
     }
