@@ -69,17 +69,17 @@ export namespace Decorators {
     /**
      * Class decorator
      */
-    export const RouteGroup  = RouteSet;
+    export const routeGroup = RouteSet;
 
     /**
      * Methods decorators
      */
-    export const Get = Route("GET");
-    export const Post = Route("POST");
-    export const Put = Route("PUT")
-    export const Patch = Route("PATCH")
-    export const Delete = Route("DELETE")
-    export const Options = Route("OPTIONS")
+    export const get = Route("GET");
+    export const post = Route("POST");
+    export const put = Route("PUT")
+    export const patch = Route("PATCH")
+    export const del = Route("DELETE")
+    export const option = Route("OPTIONS")
 }
 
 
