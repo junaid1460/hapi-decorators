@@ -66,15 +66,20 @@ function Route(
  * Namespace containing all the decorators
  */
 export namespace Decorators {
-    export const Routes  = RouteSet;
-    export namespace m {
-        export const Get = Route("GET");
-        export const Post = Route("POST");
-        export const Put = Route("PUT")
-        export const Patch = Route("PATCH")
-        export const Delete = Route("DELETE")
-        export const Options = Route("OPTIONS")
-    }
+    /**
+     * Class decorator
+     */
+    export const RouteGroup  = RouteSet;
+
+    /**
+     * Methods decorators
+     */
+    export const Get = Route("GET");
+    export const Post = Route("POST");
+    export const Put = Route("PUT")
+    export const Patch = Route("PATCH")
+    export const Delete = Route("DELETE")
+    export const Options = Route("OPTIONS")
 }
 
 
