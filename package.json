@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/junaid1460/hapi-decorators.git"
+    "url": "git+https://github.com/junaid1460/hapiest.git"
   },
   "keywords": [
     "hapi",
@@ -17,9 +17,9 @@
   "author": "Junaid",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/junaid1460/hapi-decorators/issues"
+    "url": "https://github.com/junaid1460/hapiest/issues"
   },
-  "homepage": "https://github.com/junaid1460/hapi-decorators#readme",
+  "homepage": "https://github.com/junaid1460/hapiest#readme",
   "dependencies": {
     "hapi": "^18.1.0"
   },
