@@ -6,6 +6,10 @@
 npm i @junaid1460/hapi-decorators
 ```
 
+### Requirements
+hapi 17+
+typescript 3 (es6)
+
 ### Usage
 
 ```typescript
