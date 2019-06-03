@@ -22,7 +22,7 @@ function RouteSet(args: IRouteSetOptions) {
                 path.push(args.baseUrl);
             }
             path.push(e.path);
-            e.path = join(...path, "/");
+            e.path = join(...path);
             e.options = (e.options || {}) as RouteOptions;
 
             e.options!.auth = args.auth;
