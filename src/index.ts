@@ -1,5 +1,6 @@
 import { Request, ResponseToolkit, RouteOptions, ServerRoute } from "hapi";
 import { join } from "path";
+import { isNull, isUndefined } from "util";
 
 interface IRouteSetOptions {
     baseUrl?: string;
@@ -52,13 +53,13 @@ function Route(method: HTTPMethods) {
             if (!target.routes) {
                 target.routes = [];
             }
-        
+            path = isUndefined(path) || isNull(path)  ? propertyKey : path
             target.routes.push({
                 vhost: vhost,
                 options: options,
                 rules: rules,
                 handler: descriptor.value,
-                path: path || propertyKey,
+                path: path,
                 method: method,
             });
             return descriptor;
