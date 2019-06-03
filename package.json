@@ -1,6 +1,6 @@
 {
   "name": "@junaid1460/hapi-decorators",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Decorators for hapi 17+",
   "main": "src/index.js",
   "scripts": {
