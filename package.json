@@ -26,5 +26,10 @@
   "devDependencies": {
     "@types/hapi": "^18.0.2",
     "typescript": "^3.4.5"
+  },
+  "prettier": {
+    "tabWidth": 4,
+    "semi": true,
+    "endOfLine": "auto"
   }
 }
