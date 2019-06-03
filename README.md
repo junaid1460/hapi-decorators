@@ -18,6 +18,12 @@ import { AbstractHapiModule, Decorators as d, HapiServerRoutes } from "@junaid14
 
 @d.routeGroup({ baseUrl: "api", auth: false })
 export class AdminRoutes extends HapiServerRoutes {
+
+    @d.get({path: ""}) // Path:  /api
+    api(request: Request, toolkit: ResponseToolkit, err?: Error) {
+        return "base\n"
+    }
+
     @d.get() // Path: /api/getTest
     public getTest(request: Request, toolkit: ResponseToolkit, err?: Error) {
         return "hey, what's up?\n";
@@ -49,5 +55,6 @@ async function start()  {
 }
 
 start()
+
 
 ```
