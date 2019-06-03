@@ -10,7 +10,7 @@ export class HapiServerRoutes {
     public routes: ServerRoute[];
 }
 
-export function RouteSet(args: IRouteSetOptions) {
+function RouteSet(args: IRouteSetOptions) {
     return function<T extends typeof HapiServerRoutes>(target: T) {
         const hapiTarget = (target as any) as Function;
         if (!hapiTarget.prototype.routes) {
@@ -62,9 +62,27 @@ function Route(
     };
 }
 
-export const Get = Route("GET");
-export const Post = Route("POST");
-export abstract class IHapiModule {
+/**
+ * Namespace containing all the decorators
+ */
+export namespace Decorators {
+    export const Routes  = RouteSet;
+    export namespace m {
+        export const Get = Route("GET");
+        export const Post = Route("POST");
+        export const Put = Route("PUT")
+        export const Patch = Route("PATCH")
+        export const Delete = Route("DELETE")
+        export const Options = Route("OPTIONS")
+    }
+}
+
+
+/**
+ * Class which should be extended with custom module classes to
+ * generate routes.
+ */
+export abstract class AbstractHapiModule {
     public routeSets: Array<typeof HapiServerRoutes>;
     public baseUrl?: string;
     public auth?: any;
