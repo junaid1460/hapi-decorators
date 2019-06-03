@@ -9,34 +9,41 @@ npm i @junaid1460/hapi-decorators
 ### Usage
 
 ```typescript
-
-
-import { Get, HapiServerRoutes, RouteSet, IHapiModule } from "@junaid1460/hapiest";
 import { Request, ResponseToolkit, Server } from "hapi";
+import { AbstractHapiModule, Decorators as d, HapiServerRoutes } from "@junaid1460/hapiest";
 
-@RouteSet({ baseUrl: "test", auth: false })
+@d.routeGroup({ baseUrl: "test", auth: false })
 export class AdminRoutes extends HapiServerRoutes {
-    @Get("test")
+    @d.get()
     public getTest(request: Request, toolkit: ResponseToolkit, err?: Error) {
-        return "sds";
+        return "hey, what's up?\n";
     }
 
-    @Get()
-    public getit(request: Request, toolkit: ResponseToolkit, err?: Error) {
-        return "junaid";
+    @d.get({path: 'name'})
+    public async getit(request: Request, toolkit: ResponseToolkit, err?: Error) {
+        return "junaid\n";
     }
 }
 
 
-class ArenaMainModule extends IHapiModule {
+class ArenaMainModule extends AbstractHapiModule {
     public routeSets = [AdminRoutes];
     public baseUrl = "dev";
 }
 
 export const hapiServer = new Server({
-    host: env.APP_HOST,
-    port: env.APP_PORT,
+    host: '0',
+    port: 8000,
     routes: { cors: true },
 });
+
+async function start()  {
+    await hapiServer.route(new ArenaMainModule().getRoutes())
+    await hapiServer.start().then(e => {
+        console.log("server started", hapiServer.table())
+    })
+}
+
+start()
 
 ```
