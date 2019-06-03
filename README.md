@@ -8,5 +8,35 @@ npm i @junaid1460/hapi-decorators
 
 ### Usage
 
+```typescript
 
 
+import { Get, HapiServerRoutes, RouteSet, IHapiModule } from "@junaid1460/hapiest";
+import { Request, ResponseToolkit, Server } from "hapi";
+
+@RouteSet({ baseUrl: "test", auth: false })
+export class AdminRoutes extends HapiServerRoutes {
+    @Get("test")
+    public getTest(request: Request, toolkit: ResponseToolkit, err?: Error) {
+        return "sds";
+    }
+
+    @Get()
+    public getit(request: Request, toolkit: ResponseToolkit, err?: Error) {
+        return "junaid";
+    }
+}
+
+
+class ArenaMainModule extends IHapiModule {
+    public routeSets = [AdminRoutes];
+    public baseUrl = "dev";
+}
+
+export const hapiServer = new Server({
+    host: env.APP_HOST,
+    port: env.APP_PORT,
+    routes: { cors: true },
+});
+
+```
