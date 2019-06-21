@@ -2,12 +2,13 @@
     "compilerOptions": {
         "experimentalDecorators": true,
         "module": "commonjs",
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": false,
         "emitDecoratorMetadata": true,
         "strictNullChecks": true,
+
         "lib": [
             "es5",
             "es2015",
