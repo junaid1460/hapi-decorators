@@ -1,18 +1,17 @@
 import { Request, ResponseToolkit, RouteOptions, ServerRoute } from "hapi";
 import { join } from "path";
-import { isNull, isUndefined } from "util";
 
 interface IRouteSetOptions {
     baseUrl?: string;
     auth?: any;
 }
 
-export class HapiServerRoutes {
+export class HapiestRoutes {
     public routes: ServerRoute[];
 }
 
 function RouteSet(args: IRouteSetOptions) {
-    return function<T extends typeof HapiServerRoutes>(target: T) {
+    return function<T extends typeof HapiestRoutes>(target: T) {
         const hapiTarget = (target as any) as Function;
         if (!hapiTarget.prototype.routes) {
             (hapiTarget as any).routes = [];
@@ -35,34 +34,44 @@ function RouteSet(args: IRouteSetOptions) {
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 type IRouteOptions = Omit<ServerRoute,  "method" | "handler">;
 type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
-type MakeOptional<T> = {[key in keyof T]?}
+type MakeOptional<T> = {[key in keyof T]?: T[key]}
+
+export interface HapiestParams<T extends Omit<Request, "payload" | "params" | "headers" | "query"> = Request> {
+    request: T,
+    toolkit: ResponseToolkit,
+    error?: Error,
+}
 
 function Route(method: HTTPMethods) {
     return function Get({vhost, rules, path, options}: MakeOptional<IRouteOptions> = {}) {
-        return function<T extends HapiServerRoutes>(
+        return function<T extends HapiestRoutes, Z extends Request>(
             target: T,
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
                 (
-                    request: Request,
-                    toolkit: ResponseToolkit,
-                    error?: Error,
+                  args: HapiestParams<Z>
                 ) => any
             >,
         ) {
             if (!target.routes) {
                 target.routes = [];
             }
-            path = isUndefined(path) || isNull(path)  ? propertyKey : path
+            function handler(request: Z,
+                toolkit: ResponseToolkit,
+                error?: Error) {
+                return descriptor.value!({ request: request, error: error, toolkit: toolkit})
+            };
+            let resolvedPath = path || propertyKey.toString()
+        
             target.routes.push({
                 vhost: vhost,
                 options: options,
                 rules: rules,
-                handler: descriptor.value,
-                path: path,
+                handler: handler,
+                path: resolvedPath,
                 method: method,
             });
-            return descriptor;
+            return descriptor
         };
     };
 }
@@ -93,7 +102,7 @@ export namespace Decorators {
  * generate routes.
  */
 export abstract class AbstractHapiModule {
-    public routeSets: Array<typeof HapiServerRoutes>;
+    public routeSets: Array<typeof HapiestRoutes>;
     public baseUrl?: string;
     public auth?: any;
 
@@ -114,3 +123,5 @@ export abstract class AbstractHapiModule {
         return routes;
     }
 }
+
+
