@@ -79,11 +79,11 @@ function Route(method: HTTPMethods) {
 /**
  * Namespace containing all the decorators
  */
-export namespace Decorators {
+export namespace Hapiest {
     /**
      * Class decorator
      */
-    export const routeGroup = RouteSet;
+    export const Routes = RouteSet;
 
     /**
      * Methods decorators
@@ -93,7 +93,7 @@ export namespace Decorators {
     export const put = Route("PUT")
     export const patch = Route("PATCH")
     export const del = Route("DELETE")
-    export const option = Route("OPTIONS")
+    export const options = Route("OPTIONS")
 }
 
 
