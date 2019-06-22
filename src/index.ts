@@ -36,15 +36,15 @@ type IRouteOptions = Omit<ServerRoute,  "method" | "handler">;
 type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
 type MakeOptional<T> = {[key in keyof T]?: T[key]}
 
-export interface HapiestParams<T extends Omit<Request, "payload" | "params" | "headers" | "query"> = Request> {
-    request: T,
+export interface HapiestParams<T extends HapiestRequest> {
+    request: T ,
     toolkit: ResponseToolkit,
     error?: Error,
 }
 
 function Route(method: HTTPMethods) {
     return function Get({vhost, rules, path, options}: MakeOptional<IRouteOptions> = {}) {
-        return function<T extends HapiestRoutes, Z extends Request>(
+        return function<T extends HapiestRoutes, Z extends HapiestRequest>(
             target: T,
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
@@ -125,3 +125,17 @@ export abstract class AbstractHapiModule {
 }
 
 
+
+type NakedRequest = Omit<Request, "payload" | "params" | "query" | "auth" | "headers">
+
+
+/**
+ * Gives ability to give types to payload 
+ */
+export type HapiestRequest<Payload extends any = {}, Params extends any = {}, Query = {}, Headers = {}, AuthCreds = {}> =  {
+    payload: Payload;
+    params: Params;
+    query: Query;
+    headers: Headers;
+    auth: AuthCreds & Omit<Request["auth"], "credentials">
+} & NakedRequest
