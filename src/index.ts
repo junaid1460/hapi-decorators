@@ -132,7 +132,7 @@ type NakedRequest = Omit<Request, "payload" | "params" | "query" | "auth" | "hea
 /**
  * Gives ability to give types to payload 
  */
-export type HapiestRequest<Payload extends any = {}, Params extends any = {}, Query = {}, Headers = {}, AuthCreds = {}> =  {
+export type HapiestRequest<Payload = Request['payload'], Params = Request['params'], Query = Request['query'], Headers = Request['headers'], AuthCreds = Request['auth']['credentials']> =  {
     payload: Payload;
     params: Params;
     query: Query;
