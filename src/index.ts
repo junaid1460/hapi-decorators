@@ -137,5 +137,5 @@ export type HapiestRequest<Payload extends any = {}, Params extends any = {}, Qu
     params: Params;
     query: Query;
     headers: Headers;
-    auth: AuthCreds & Omit<Request["auth"], "credentials">
+    auth: { credentials: AuthCreds} & Omit<Request["auth"], "credentials">
 } & NakedRequest
