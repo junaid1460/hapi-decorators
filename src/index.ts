@@ -101,7 +101,7 @@ export namespace Hapiest {
  * Class which should be extended with custom module classes to
  * generate routes.
  */
-export abstract class AbstractHapiModule {
+export abstract class HapiestModule {
     public routeSets: Array<typeof HapiestRoutes>;
     public baseUrl?: string;
     public auth?: any;
