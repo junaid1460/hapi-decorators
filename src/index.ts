@@ -36,7 +36,7 @@ type IRouteOptions = Omit<ServerRoute,  "method" | "handler">;
 type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
 type MakeOptional<T> = {[key in keyof T]?: T[key]}
 
-export interface HapiestParams<T extends HapiestRequest> {
+export interface HapiestParams<T extends HapiestRequest = Request> {
     request: T ,
     toolkit: ResponseToolkit,
     error?: Error,
