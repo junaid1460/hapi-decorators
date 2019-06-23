@@ -128,11 +128,16 @@ export abstract class HapiestModule {
 
 type NakedRequest = Omit<Request, "payload" | "params" | "query" | "auth" | "headers">
 
-
+type KeyValue = {[name: string]: any}
 /**
  * Gives ability to give types to payload 
  */
-export type HapiestRequest<Payload = Request['payload'], Params = Request['params'], Query = Request['query'], Headers = Request['headers'], AuthCreds = Request['auth']['credentials']> =  {
+export type HapiestRequest<
+Payload = any, 
+Params = any, 
+Query = any, 
+Headers = any, 
+AuthCreds = any> =  {
     payload: Payload;
     params: Params;
     query: Query;
