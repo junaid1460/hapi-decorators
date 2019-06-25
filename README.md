@@ -14,10 +14,10 @@ typescript 3 (es6)
 
 ```typescript
 import { Server } from "hapi";
-import { Hapiest, HapiestModule, HapiestParams, HapiestRequest, HapiestRoutes } from "hapiest";
+import { Hapiest, HapiestParams, HapiestRequest } from ".";
 
 @Hapiest.Routes({ baseUrl: "api", auth: false })
-export class AdminRoutes extends HapiestRoutes {
+class AdminRoutes extends Hapiest.HapiestRoutes {
 
     @Hapiest.get({path: ""}) // Path:  /api
     api(args: HapiestParams) {
@@ -37,12 +37,12 @@ export class AdminRoutes extends HapiestRoutes {
 }
 
 
-class MyFirstHapiestModule extends HapiestModule {
+class MyFirstHapiestModule extends Hapiest.HapiestModule {
     public routeSets = [AdminRoutes];
     public baseUrl = "dev";
 }
 
-export const hapiServer = new Server({
+const hapiServer = new Server({
     host: '0',
     port: 8000,
     routes: { cors: true },
@@ -56,6 +56,4 @@ async function start()  {
 }
 
 start()
-
-
 ```
