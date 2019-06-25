@@ -1,8 +1,8 @@
 import { Server } from "hapi";
-import { Hapiest, HapiestModule, HapiestParams, HapiestRequest, HapiestRoutes } from ".";
+import { Hapiest, HapiestParams, HapiestRequest } from ".";
 
 @Hapiest.Routes({ baseUrl: "api", auth: false })
-class AdminRoutes extends HapiestRoutes {
+class AdminRoutes extends Hapiest.HapiestRoutes {
 
     @Hapiest.get({path: ""}) // Path:  /api
     api(args: HapiestParams) {
@@ -22,7 +22,7 @@ class AdminRoutes extends HapiestRoutes {
 }
 
 
-class MyFirstHapiestModule extends HapiestModule {
+class MyFirstHapiestModule extends Hapiest.HapiestModule {
     public routeSets = [AdminRoutes];
     public baseUrl = "dev";
 }
