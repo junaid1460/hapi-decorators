@@ -1,0 +1,49 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "env": {
+                "NODE_ENV": "development",
+                "SERVER_URL": "http://localhost:8000",
+                "CLOUD_FRONT": "https://dev-loco-arena.getloconow.com/",
+                "SOCKET_PATH": "ws://localhost:9000",
+                "SOCKET_SERVER_PORT": "9000"
+            },
+            "console": false,
+            "name": "DEBUG",
+            "outFiles": ["${workspaceRoot}/src/**/*"],
+            "program": "${workspaceRoot}/src/index.ts",
+            "request": "launch",
+            "runtimeArgs": ["--nolazy"],
+            "runtimeExecutable": null,
+            "sourceMaps": true,
+            "stopOnEntry": false,
+            "type": "node"
+        },
+        {
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "console": false,
+            "name": "Test",
+            "outFiles": ["${workspaceRoot}/build/**/*"],
+            "program": "${workspaceRoot}/src/hapi/index.ts",
+            "request": "launch",
+            "runtimeArgs": ["--nolazy"],
+            "runtimeExecutable": "/Users/muhammadjunaid/.nvm/versions/node/v8.9.4/bin/node",
+            "sourceMaps": true,
+            "stopOnEntry": false,
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 5858
+        }
+    ]
+}

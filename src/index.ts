@@ -1,17 +1,16 @@
 import { Request, ResponseToolkit, RouteOptions, ServerRoute } from "hapi";
+import * as Joi from "joi";
 import { join } from "path";
-
+import "reflect-metadata";
+const t = Joi.string().email()
 interface IRouteSetOptions {
     baseUrl?: string;
     auth?: any;
 }
 
-export class HapiestRoutes {
-    public routes: ServerRoute[];
-}
 
 function RouteSet(args: IRouteSetOptions) {
-    return function<T extends typeof HapiestRoutes>(target: T) {
+    return function<T extends typeof Hapiest.HapiestRoutes>(target: T) {
         const hapiTarget = (target as any) as Function;
         if (!hapiTarget.prototype.routes) {
             (hapiTarget as any).routes = [];
@@ -32,9 +31,15 @@ function RouteSet(args: IRouteSetOptions) {
 }
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-type IRouteOptions = Omit<ServerRoute,  "method" | "handler">;
+type IRouteOptions = Omit<ServerRoute,  "method" | "handler"> & {
+    validators: {
+        payload?: Joi.Schema;
+        query?: Joi.Schema;
+    }
+};
 type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
 type MakeOptional<T> = {[key in keyof T]?: T[key]}
+
 
 export interface HapiestParams<T extends HapiestRequest = Request> {
     request: T ,
@@ -42,9 +47,11 @@ export interface HapiestParams<T extends HapiestRequest = Request> {
     error?: Error,
 }
 
+
+
 function Route(method: HTTPMethods) {
     return function Get({vhost, rules, path, options}: MakeOptional<IRouteOptions> = {}) {
-        return function<T extends HapiestRoutes, Z extends HapiestRequest>(
+        return function<T extends Hapiest.HapiestRoutes, Z extends HapiestRequest>(
             target: T,
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
@@ -85,6 +92,10 @@ export namespace Hapiest {
      */
     export const Routes = RouteSet;
 
+    export class HapiestRoutes {
+        public routes: ServerRoute[];
+    }
+    
     /**
      * Methods decorators
      */
@@ -94,35 +105,40 @@ export namespace Hapiest {
     export const patch = Route("PATCH")
     export const del = Route("DELETE")
     export const options = Route("OPTIONS")
+    export const request = Route
+
+    export abstract class HapiestModule {
+        public routeSets: Array<typeof Hapiest.HapiestRoutes>;
+        public baseUrl?: string;
+        public auth?: any;
+    
+        public getRoutes(): ServerRoute[] {
+            const routes: ServerRoute[] = [];
+            for (const set of this.routeSets) {
+                for (const route of set.prototype.routes) {
+                    if (this.baseUrl) {
+                        route.path = join("/", this.baseUrl, route.path);
+                    }
+                    if (this.auth) {
+                        route.options = (route.options || {}) as RouteOptions;
+                        route.options.auth = this.auth;
+                    }
+                    routes.push(route);
+                }
+            }
+            return routes;
+        }
+    }
 }
+
+
 
 
 /**
  * Class which should be extended with custom module classes to
  * generate routes.
  */
-export abstract class HapiestModule {
-    public routeSets: Array<typeof HapiestRoutes>;
-    public baseUrl?: string;
-    public auth?: any;
 
-    public getRoutes(): ServerRoute[] {
-        const routes: ServerRoute[] = [];
-        for (const set of this.routeSets) {
-            for (const route of set.prototype.routes) {
-                if (this.baseUrl) {
-                    route.path = join("/", this.baseUrl, route.path);
-                }
-                if (this.auth) {
-                    route.options = (route.options || {}) as RouteOptions;
-                    route.options.auth = this.auth;
-                }
-                routes.push(route);
-            }
-        }
-        return routes;
-    }
-}
 
 
 
