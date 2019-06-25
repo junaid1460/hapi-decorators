@@ -41,22 +41,18 @@ type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
 type MakeOptional<T> = {[key in keyof T]?: T[key]}
 
 
-export interface HapiestParams<T extends HapiestRequest = Request> {
-    request: T ,
-    toolkit: ResponseToolkit,
-    error?: Error,
-}
+
 
 
 
 function Route(method: HTTPMethods) {
     return function Get({vhost, rules, path, options}: MakeOptional<IRouteOptions> = {}) {
-        return function<T extends Hapiest.HapiestRoutes, Z extends HapiestRequest>(
+        return function<T extends Hapiest.HapiestRoutes, Z extends Hapiest.HapiestRequest>(
             target: T,
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
                 (
-                  args: HapiestParams<Z>
+                  args: Hapiest.HapiestParams<Z>
                 ) => any
             >,
         ) {
@@ -95,7 +91,26 @@ export namespace Hapiest {
     export class HapiestRoutes {
         public routes: ServerRoute[];
     }
-    
+
+    export interface HapiestParams<T extends HapiestRequest = Request> {
+        request: T ,
+        toolkit: ResponseToolkit,
+        error?: Error,
+    }
+
+    export interface HapiestRequest<
+    Payload = any, 
+    Params = any, 
+    Query = any, 
+    Headers = any, 
+    AuthCreds = any> extends NakedRequest  {
+        payload: Payload;
+        params: Params;
+        query: Query;
+        headers: Headers;
+        auth: { credentials: AuthCreds} & Omit<Request["auth"], "credentials">
+    } 
+        
     /**
      * Methods decorators
      */
@@ -148,15 +163,4 @@ type KeyValue = {[name: string]: any}
 /**
  * Gives ability to give types to payload 
  */
-export type HapiestRequest<
-Payload = any, 
-Params = any, 
-Query = any, 
-Headers = any, 
-AuthCreds = any> =  {
-    payload: Payload;
-    params: Params;
-    query: Query;
-    headers: Headers;
-    auth: { credentials: AuthCreds} & Omit<Request["auth"], "credentials">
-} & NakedRequest
+
