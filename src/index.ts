@@ -131,12 +131,13 @@ export namespace Hapiest {
             const routes: ServerRoute[] = [];
             for (const set of this.routeSets) {
                 for (const route of set.prototype.routes) {
+                    let newRoute = {...route}
                     if (this.baseUrl) {
-                        route.path = join("/", this.baseUrl, route.path);
+                        newRoute.path = join("/", this.baseUrl, route.path);
                     }
                     if (this.auth) {
-                        route.options = (route.options || {}) as RouteOptions;
-                        route.options.auth = this.auth;
+                        newRoute.options = (newRoute.options || {}) as RouteOptions;
+                        newRoute.options.auth = this.auth;
                     }
                     routes.push(route);
                 }
