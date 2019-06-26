@@ -139,7 +139,7 @@ export namespace Hapiest {
                         newRoute.options = (newRoute.options || {}) as RouteOptions;
                         newRoute.options.auth = this.auth;
                     }
-                    routes.push(route);
+                    routes.push(newRoute);
                 }
             }
             return routes;
