@@ -17,7 +17,7 @@
             "program": "${workspaceRoot}/src/index.ts",
             "request": "launch",
             "runtimeArgs": ["--nolazy"],
-            "runtimeExecutable": null,
+            "runtimeExecutable": "/Users/muhammadjunaid/.nvm/versions/node/v10.16.0/bin/node",
             "sourceMaps": true,
             "stopOnEntry": false,
             "type": "node"
@@ -34,7 +34,7 @@
             "program": "${workspaceRoot}/src/hapi/index.ts",
             "request": "launch",
             "runtimeArgs": ["--nolazy"],
-            "runtimeExecutable": "/Users/muhammadjunaid/.nvm/versions/node/v8.9.4/bin/node",
+            "runtimeExecutable": "/Users/muhammadjunaid/.nvm/versions/node/v10.16.0/bin/node",
             "sourceMaps": true,
             "stopOnEntry": false,
             "type": "node"
