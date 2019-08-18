@@ -142,7 +142,7 @@ export namespace Hapiest {
                     if (this.baseUrl) {
                         newRoute.path = join("/", this.baseUrl, route.path);
                     }
-                    if (this.auth) {
+                    if (this.auth !== undefined) {
                         newRoute.options = (newRoute.options ||
                             {}) as RouteOptions;
                         newRoute.options.auth = this.auth;
