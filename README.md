@@ -1,4 +1,5 @@
 ## [Hapiest] Beautiful code is what I seek.
+
 <span class="badge-npmversion"><a href="https://www.npmjs.com/package/hapiest" title="View this project on NPM"><img src="https://img.shields.io/npm/v/hapiest.svg" alt="NPM version" /></a></span>
 
 ```shell
@@ -7,6 +8,7 @@ npm i hapiest@latest
 ```
 
 ### Requirements
+
 hapi 17+
 typescript 3 (es6)
 
@@ -14,47 +16,78 @@ typescript 3 (es6)
 
 ```typescript
 import { Server } from "hapi";
-import { Hapiest } from ".";
+import { Hapiest } from "hapiest";
 
 @Hapiest.Routes({ baseUrl: "api", auth: false })
 class AdminRoutes extends Hapiest.HapiestRoutes {
-
-    @Hapiest.get({path: ""}) // Path:  /api
-    api(args: Hapiest.HapiestParams) {
-        return "base\n"
+    @Hapiest.get({ path: "" }) // Path:  /api
+    public api(args: Hapiest.HapiestParams) {
+        return "base\n";
     }
 
     @Hapiest.get() // Path: /api/getTest
-    public getTest({request}: Hapiest.HapiestParams<Hapiest.HapiestRequest<{username: string}>>) {
-
-        return `hey, what's up? I know type of payload ${request.payload.username}\n`;
+    public getTest({
+        request
+    }: Hapiest.HapiestParams<Hapiest.HapiestRequest<{ username: string }>>) {
+        return `hey, what's up? I know type of payload ${
+            request.payload.username
+        }\n`;
     }
 
-    @Hapiest.get({path: 'name'}) // Path: /api/name
+    @Hapiest.get({ path: "name" }) // Path: /api/name
     public async getit(args: Hapiest.HapiestParams) {
         return "junaid\n";
     }
 }
 
-
 class MyFirstHapiestModule extends Hapiest.HapiestModule {
     public routeSets = [AdminRoutes];
     public baseUrl = "dev";
+    public auth = "simple"; // Make sure that you registered auth plugin
+}
+
+class ModuleWithNoAuth extends Hapiest.HapiestModule {
+    public routeSets = [AdminRoutes];
+    public baseUrl = "test";
+    public auth: false = false;
 }
 
 const hapiServer = new Server({
-    host: '0',
+    host: "0",
     port: 8000,
-    routes: { cors: true },
+    routes: { cors: true }
 });
 
-async function start()  {
-    await hapiServer.route(new MyFirstHapiestModule().getRoutes())
+async function start() {
+    await hapiServer.register({
+        plugin: require("hapi-auth-basic")
+    });
+    hapiServer.auth.strategy("simple", "basic", {
+        validate: () => true
+    });
+    hapiServer.route(new MyFirstHapiestModule().getRoutes());
+    hapiServer.route(new ModuleWithNoAuth().getRoutes());
+
     await hapiServer.start().then(e => {
-        console.log("server started", hapiServer.table())
-    })
+        console.log("server started");
+        const routesText = hapiServer
+            .table()
+            .map(route => {
+                return `${route.method}: (${JSON.stringify(
+                    route.settings.auth
+                ) || "No auth"}) ${route.path}`;
+            })
+            .join("\n");
+        console.log(routesText);
+        // server started
+        // get: ({"strategies":["simple"],"mode":"required"}) /dev/api/api
+        // get: ({"strategies":["simple"],"mode":"required"}) /dev/api/getTest
+        // get: ({"strategies":["simple"],"mode":"required"}) /dev/api/name
+        // get: (false) /test/api/api
+        // get: (false) /test/api/getTest
+        // get: (false) /test/api/name
+    });
 }
 
-start()
-
+start();
 ```
