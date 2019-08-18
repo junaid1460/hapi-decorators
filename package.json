@@ -23,6 +23,7 @@
   "dependencies": {
     "@types/joi": "^14.3.3",
     "hapi": "^18.1.0",
+    "hapi-auth-basic": "^5.0.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {

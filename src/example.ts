@@ -26,6 +26,13 @@ class AdminRoutes extends Hapiest.HapiestRoutes {
 class MyFirstHapiestModule extends Hapiest.HapiestModule {
     public routeSets = [AdminRoutes];
     public baseUrl = "dev";
+    public auth = "simple"; // Make sure that you registered auth plugin
+}
+
+class ModuleWithNoAuth extends Hapiest.HapiestModule {
+    public routeSets = [AdminRoutes];
+    public baseUrl = "test";
+    public auth: false = false;
 }
 
 const hapiServer = new Server({
@@ -35,9 +42,26 @@ const hapiServer = new Server({
 });
 
 async function start() {
-    await hapiServer.route(new MyFirstHapiestModule().getRoutes());
+    await hapiServer.register({
+        plugin: require("hapi-auth-basic"),
+    });
+    hapiServer.auth.strategy("simple", "basic", {
+        validate: () => true,
+    });
+    hapiServer.route(new MyFirstHapiestModule().getRoutes());
+    hapiServer.route(new ModuleWithNoAuth().getRoutes());
+
     await hapiServer.start().then((e) => {
-        console.log("server started", hapiServer.table());
+        console.log("server started");
+        const routesText = hapiServer
+            .table()
+            .map((route) => {
+                return `${route.method}: (${JSON.stringify(
+                    route.settings.auth,
+                ) || "No auth"}) ${route.path}`;
+            })
+            .join("\n");
+        console.log(routesText);
     });
 }
 
