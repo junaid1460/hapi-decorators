@@ -62,6 +62,13 @@ async function start() {
             })
             .join("\n");
         console.log(routesText);
+        // server started
+        // get: ({"strategies":["simple"],"mode":"required"}) /dev/api/api
+        // get: ({"strategies":["simple"],"mode":"required"}) /dev/api/getTest
+        // get: ({"strategies":["simple"],"mode":"required"}) /dev/api/name
+        // get: (false) /test/api/api
+        // get: (false) /test/api/getTest
+        // get: (false) /test/api/name
     });
 }
 
