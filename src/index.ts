@@ -2,70 +2,76 @@ import { Request, ResponseToolkit, RouteOptions, ServerRoute } from "hapi";
 import * as Joi from "joi";
 import { join } from "path";
 import "reflect-metadata";
-const t = Joi.string().email()
+const t = Joi.string().email();
 interface IRouteSetOptions {
     baseUrl?: string;
-    auth?: any;
+    auth?: RouteOptions["auth"];
 }
 
-
-function RouteSet(args: IRouteSetOptions) {
-    return function<T extends typeof Hapiest.HapiestRoutes>(target: T) {
-        const hapiTarget = (target as any) as Function;
+/**
+ * Class decorator
+ */
+function RouteSet({ auth, baseUrl }: IRouteSetOptions) {
+    return <T extends typeof Hapiest.HapiestRoutes>(target: T) => {
+        const hapiTarget = (target as any) as {
+            prototype: { routes: string };
+        };
         if (!hapiTarget.prototype.routes) {
             (hapiTarget as any).routes = [];
         }
         target.prototype.routes.forEach((e) => {
             const path: string[] = ["/"];
-            if (args.baseUrl) {
-                path.push(args.baseUrl);
+            if (baseUrl) {
+                path.push(baseUrl);
             }
             path.push(e.path);
             e.path = join(...path);
             e.options = (e.options || {}) as RouteOptions;
 
-            e.options!.auth = args.auth;
+            e.options!.auth = auth;
         });
         return hapiTarget as any;
     };
 }
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-type IRouteOptions = Omit<ServerRoute,  "method" | "handler"> & {
-    validators: {
-        payload?: Joi.Schema;
-        query?: Joi.Schema;
-    }
-};
-type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS"
-type MakeOptional<T> = {[key in keyof T]?: T[key]}
-
-
-
-
-
+type IRouteOptions = Omit<ServerRoute, "method" | "handler"> & {};
+type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+type MakeOptional<T> = { [key in keyof T]?: T[key] };
 
 function Route(method: HTTPMethods) {
-    return function Get({vhost, rules, path, options}: MakeOptional<IRouteOptions> = {}) {
-        return function<T extends Hapiest.HapiestRoutes, Z extends Hapiest.HapiestRequest>(
+    return function Get({
+        vhost,
+        rules,
+        path,
+        options,
+    }: MakeOptional<IRouteOptions> = {}) {
+        return <
+            T extends Hapiest.HapiestRoutes,
+            Z extends Hapiest.HapiestRequest
+        >(
             target: T,
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
-                (
-                  args: Hapiest.HapiestParams<Z>
-                ) => any
+                (args: Hapiest.HapiestParams<Z>) => any
             >,
-        ) {
+        ) => {
             if (!target.routes) {
                 target.routes = [];
             }
-            function handler(request: Z,
+            function handler(
+                request: Z,
                 toolkit: ResponseToolkit,
-                error?: Error) {
-                return descriptor.value!({ request: request, error: error, toolkit: toolkit})
-            };
-            let resolvedPath = path || propertyKey.toString()
-        
+                error?: Error,
+            ) {
+                return descriptor.value!({
+                    request: request,
+                    error: error,
+                    toolkit: toolkit,
+                });
+            }
+            const resolvedPath = path || String(propertyKey);
+
             target.routes.push({
                 vhost: vhost,
                 options: options,
@@ -74,7 +80,7 @@ function Route(method: HTTPMethods) {
                 path: resolvedPath,
                 method: method,
             });
-            return descriptor
+            return descriptor;
         };
     };
 }
@@ -93,50 +99,52 @@ export namespace Hapiest {
     }
 
     export interface HapiestParams<T extends HapiestRequest = Request> {
-        request: T ,
-        toolkit: ResponseToolkit,
-        error?: Error,
+        request: T;
+        toolkit: ResponseToolkit;
+        error?: Error;
     }
 
     export interface HapiestRequest<
-    Payload = any, 
-    Params = any, 
-    Query = any, 
-    Headers = any, 
-    AuthCreds = any> extends NakedRequest  {
+        Payload = any,
+        Params = any,
+        Query = any,
+        Headers = any,
+        AuthCreds = any
+    > extends NakedRequest {
         payload: Payload;
         params: Params;
         query: Query;
         headers: Headers;
-        auth: { credentials: AuthCreds} & Omit<Request["auth"], "credentials">
-    } 
-        
+        auth: { credentials: AuthCreds } & Omit<Request["auth"], "credentials">;
+    }
+
     /**
      * Methods decorators
      */
     export const get = Route("GET");
     export const post = Route("POST");
-    export const put = Route("PUT")
-    export const patch = Route("PATCH")
-    export const del = Route("DELETE")
-    export const options = Route("OPTIONS")
-    export const request = Route
+    export const put = Route("PUT");
+    export const patch = Route("PATCH");
+    export const del = Route("DELETE");
+    export const options = Route("OPTIONS");
+    export const request = Route;
 
     export abstract class HapiestModule {
         public routeSets: Array<typeof Hapiest.HapiestRoutes>;
         public baseUrl?: string;
-        public auth?: any;
-    
+        public auth?: RouteOptions["auth"];
+
         public getRoutes(): ServerRoute[] {
             const routes: ServerRoute[] = [];
             for (const set of this.routeSets) {
                 for (const route of set.prototype.routes) {
-                    let newRoute = {...route}
+                    const newRoute = { ...route };
                     if (this.baseUrl) {
                         newRoute.path = join("/", this.baseUrl, route.path);
                     }
                     if (this.auth) {
-                        newRoute.options = (newRoute.options || {}) as RouteOptions;
+                        newRoute.options = (newRoute.options ||
+                            {}) as RouteOptions;
                         newRoute.options.auth = this.auth;
                     }
                     routes.push(newRoute);
@@ -147,21 +155,12 @@ export namespace Hapiest {
     }
 }
 
-
-
-
 /**
  * Class which should be extended with custom module classes to
  * generate routes.
  */
 
-
-
-
-type NakedRequest = Omit<Request, "payload" | "params" | "query" | "auth" | "headers">
-
-type KeyValue = {[name: string]: any}
-/**
- * Gives ability to give types to payload 
- */
-
+type NakedRequest = Omit<
+    Request,
+    "payload" | "params" | "query" | "auth" | "headers"
+>;
