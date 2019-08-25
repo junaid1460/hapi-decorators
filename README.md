@@ -2,6 +2,8 @@
 
 <span class="badge-npmversion"><a href="https://www.npmjs.com/package/hapiest" title="View this project on NPM"><img src="https://img.shields.io/npm/v/hapiest.svg" alt="NPM version" /></a></span>
 
+[https://medium.com/@junaid1460/hapiest-7f3a184604b7](https://medium.com/@junaid1460/hapiest-7f3a184604b7) read use cases here.
+
 ```shell
 
 npm i hapiest@latest
@@ -29,9 +31,7 @@ class AdminRoutes extends Hapiest.HapiestRoutes {
     public getTest({
         request
     }: Hapiest.HapiestParams<Hapiest.HapiestRequest<{ username: string }>>) {
-        return `hey, what's up? I know type of payload ${
-            request.payload.username
-        }\n`;
+        return `hey, what's up? I know type of payload ${request.payload.username}\n`;
     }
 
     @Hapiest.get({ path: "name" }) // Path: /api/name
