@@ -19,7 +19,7 @@ function RouteSet({ auth, baseUrl }: IRouteSetOptions) {
         if (!hapiTarget.prototype.routes) {
             (hapiTarget as any).routes = [];
         }
-        target.prototype.routes.forEach((e) => {
+        target.prototype.routes.forEach(e => {
             const path: string[] = ["/"];
             if (baseUrl) {
                 path.push(baseUrl);
@@ -28,7 +28,7 @@ function RouteSet({ auth, baseUrl }: IRouteSetOptions) {
             e.path = join(...path);
             e.options = (e.options || {}) as RouteOptions;
 
-            e.options!.auth = auth;
+            e.options!.auth = e.options!.auth || auth;
         });
         return hapiTarget as any;
     };
@@ -44,8 +44,8 @@ function Route(method: HTTPMethods) {
         vhost,
         rules,
         path,
-        options,
-    }: MakeOptional<IRouteOptions> = {}) {
+        options
+    }: Partial<IRouteOptions> = {}) {
         return <
             T extends Hapiest.HapiestRoutes,
             Z extends Hapiest.HapiestRequest
@@ -54,7 +54,7 @@ function Route(method: HTTPMethods) {
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
                 (args: Hapiest.HapiestParams<Z>) => any
-            >,
+            >
         ) => {
             if (!target.routes) {
                 target.routes = [];
@@ -62,12 +62,12 @@ function Route(method: HTTPMethods) {
             function handler(
                 request: Z,
                 toolkit: ResponseToolkit,
-                error?: Error,
+                error?: Error
             ) {
                 return descriptor.value!({
                     request: request,
                     error: error,
-                    toolkit: toolkit,
+                    toolkit: toolkit
                 });
             }
             const resolvedPath = path || String(propertyKey);
@@ -78,7 +78,7 @@ function Route(method: HTTPMethods) {
                 rules: rules,
                 handler: handler,
                 path: resolvedPath,
-                method: method,
+                method: method
             });
             return descriptor;
         };
@@ -145,7 +145,8 @@ export namespace Hapiest {
                     if (this.auth !== undefined) {
                         newRoute.options = (newRoute.options ||
                             {}) as RouteOptions;
-                        newRoute.options.auth = this.auth;
+                        newRoute.options.auth =
+                            newRoute.options.auth || this.auth;
                     }
                     routes.push(newRoute);
                 }
