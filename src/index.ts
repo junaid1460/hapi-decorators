@@ -140,7 +140,11 @@ export namespace Hapiest {
                 for (const route of set.prototype.routes) {
                     const newRoute = { ...route };
                     if (this.baseUrl) {
-                        newRoute.path = join("/", this.baseUrl, route.path);
+                        newRoute.path = join(
+                            "/",
+                            this.baseUrl,
+                            route.path
+                        ).replace(/\\/gi, "/");
                     }
                     if (this.auth !== undefined) {
                         newRoute.options = (newRoute.options ||
