@@ -19,7 +19,7 @@ function RouteSet({ auth, baseUrl }: IRouteSetOptions) {
         if (!hapiTarget.prototype.routes) {
             (hapiTarget as any).routes = [];
         }
-        target.prototype.routes.forEach(e => {
+        target.prototype.routes.forEach((e) => {
             const path: string[] = ["/"];
             if (baseUrl) {
                 path.push(baseUrl);
@@ -44,7 +44,7 @@ function Route(method: HTTPMethods) {
         vhost,
         rules,
         path,
-        options
+        options,
     }: Partial<IRouteOptions> = {}) {
         return <
             T extends Hapiest.HapiestRoutes,
@@ -67,7 +67,7 @@ function Route(method: HTTPMethods) {
                 return descriptor.value!({
                     request: request,
                     error: error,
-                    toolkit: toolkit
+                    toolkit: toolkit,
                 });
             }
             const resolvedPath = path || String(propertyKey);
@@ -78,7 +78,7 @@ function Route(method: HTTPMethods) {
                 rules: rules,
                 handler: handler,
                 path: resolvedPath,
-                method: method
+                method: method,
             });
             return descriptor;
         };
@@ -95,7 +95,7 @@ export namespace Hapiest {
     export const Routes = RouteSet;
 
     export class HapiestRoutes {
-        public routes: ServerRoute[];
+        public routes: ServerRoute[] = [];
     }
 
     export interface HapiestParams<T extends HapiestRequest = Request> {
@@ -130,7 +130,7 @@ export namespace Hapiest {
     export const request = Route;
 
     export abstract class HapiestModule {
-        public routeSets: Array<typeof Hapiest.HapiestRoutes>;
+        public routeSets: Array<typeof Hapiest.HapiestRoutes> = [];
         public baseUrl?: string;
         public auth?: RouteOptions["auth"];
 
